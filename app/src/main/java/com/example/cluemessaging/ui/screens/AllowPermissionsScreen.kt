@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cluemessaging.MainActivity
@@ -31,10 +30,10 @@ import com.example.cluemessaging.ui.composable_lib.LibText
 fun AllowPermissionsScreen(context: Context? = null) {
     Surface(modifier = Modifier
         .fillMaxSize()
-        .padding(16.dp)
+        .padding(start = 16.dp, top = 72.dp, end = 16.dp, bottom = 48.dp)
         .background(color = Color.Transparent)){
         Column (
-            modifier = Modifier.background(color = colorResource(R.color.moonlight))
+//            modifier = Modifier.background(color = colorResource(R.color.moonlight))
         ) {
             LibTextFocus("Allow Permissions", true)
             Spacer(modifier = Modifier.height(18.dp))

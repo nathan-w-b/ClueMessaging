@@ -1,6 +1,7 @@
 package com.example.cluemessaging.ui.composable_lib
 
 import android.util.Log
+import android.widget.ImageButton
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,8 +23,12 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,14 +52,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cluemessaging.R
+import com.example.cluemessaging.ui.theme.ClueMessagingTheme
 
 @Composable
-fun LibText(textVal: String, centered: Boolean = false) {
+fun LibText(textVal: String, centered: Boolean = false, textColor: Color? = null) {
     val textAlignment = if (centered) TextAlign.Center else TextAlign.Start
-    Text(
-        text = textVal,
-//        modifier = Modifier.fillMaxWidth(),
-        textAlign = textAlignment)
+    if (textColor == null)
+        Text(
+            text = textVal,
+    //        modifier = Modifier.fillMaxWidth(),
+            textAlign = textAlignment)
+    else
+        Text(
+            text = textVal,
+            textAlign = textAlignment,
+            color = textColor)
 }
 
 @Composable
@@ -68,15 +80,16 @@ fun LibTextDescription(textVal: String, centered: Boolean = false) {
 }
 
 @Composable
-fun LibTextFocus(textVal: String, title:Boolean = true) {
+fun LibTextFocus(textVal: String, title:Boolean = true, centered: Boolean = true) {
+    val textAlign = if (centered) TextAlign.Center else TextAlign.Start
     val titleStyle = TextStyle(
         fontSize = 28.sp,
         fontWeight = FontWeight.Bold,
-        textAlign = TextAlign.Center
+        textAlign = textAlign
     )
     val textStyle = TextStyle(
         fontSize = 24.sp,
-        textAlign = TextAlign.Center
+        textAlign = textAlign
     )
     val style = if (title) titleStyle else textStyle
 
@@ -106,6 +119,32 @@ fun LibTextBadge(imageId: Int, titleString: String, textString: String){
             LibTextDescription(textVal = textString)
         }
     }
+}
+
+@Composable
+fun LibTextField(labelValue: String, initValue: String = "", leadingIconId: Int? = null, onValueChangeFunction: ((String) -> Unit)? = null){
+    var leadingIconVal: @Composable (() -> Unit)? = null
+    if (leadingIconId != null)
+        leadingIconVal = {
+            Icon(
+                modifier = Modifier.size(36.dp),
+                painter = painterResource(id = leadingIconId),
+                contentDescription = "")
+        }
+
+    TextField(
+        modifier = Modifier
+//            .fillMaxWidth()
+            .clip(RoundedCornerShape(4.dp)),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.LightGray,
+            unfocusedContainerColor = Color.Transparent),
+        label = {Text(text = labelValue)},
+        value = initValue,
+        keyboardOptions = KeyboardOptions.Default,
+        onValueChange = onValueChangeFunction?: {},
+        leadingIcon = leadingIconVal
+    )
 }
 
 @Composable
@@ -176,13 +215,23 @@ fun LibButton(textVal: String, onClickFunction: () -> Unit){
 }
 
 @Composable
+fun LibButtonImage(imageId: Int, onClickFunction: () -> Unit){
+    Button(
+        onClick = onClickFunction,
+        colors = ButtonDefaults.buttonColors(Color.Transparent)
+    ) {
+        Image(painter = painterResource(imageId), contentDescription = "")
+    }
+}
+
+@Composable
 fun LibButtonBadge(imageId: Int, titleString: String,
                    textString: String, onClickFunction: () -> Unit){
     Button(
         modifier = Modifier
             .fillMaxWidth()
             .padding(6.dp),
-        colors = ButtonDefaults.buttonColors(Color.Transparent, Color.DarkGray),
+        colors = ButtonDefaults.buttonColors(Color.Transparent, MaterialTheme.colorScheme.onBackground),
         border = BorderStroke(0.dp, Color.Transparent),
         onClick = onClickFunction) {
         Row( modifier = Modifier.fillMaxWidth()) {
@@ -209,8 +258,8 @@ fun LibButtonFocus(buttonText: String, onClickFunction: () -> Unit) {
             .background(
                 brush = Brush.horizontalGradient(
                     listOf(
-                        colorResource(R.color.purple_500),
-                        colorResource(R.color.purple_200)
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.inversePrimary
                     )
                 ),
                 shape = RoundedCornerShape(12.dp)
@@ -294,20 +343,21 @@ fun LibCheckbox(textString: String){
 @Preview(showSystemUi = true)
 @Composable
 fun LibPreview(){
-    Column () {
-        LibTextFocus("LibTextFocus")
-        LibTextFocus("LibTextFocus - Non Title", false)
-        LibText("LibText")
-        LibTextBadge(imageId = R.drawable.ic_notifications, titleString = "Lib Text Badge", textString = "Dummy Badge String")
-        LibClickableText(textVal = "Lib Clickable Text", true) {}
-        LibTextFieldOutlined("Lib Text Field Outlined", leadingIconId = R.mipmap.email)
-        LibTextFieldPassword("Lib Text Field Password")
-        LibButton("Dummy Button") {}
-        LibButtonBadge(imageId = R.drawable.ic_launcher_foreground, titleString = "Dummy Button", textString = "This is a dummy image button for the preview.") {}
-        LibDividerText(textString = "Or")
-        LibButtonFocus(buttonText = "Focus") {}
-        LibCheckbox("Lib Checkbox")
+    ClueMessagingTheme {
+        Column () {
+            LibTextFocus("LibTextFocus")
+            LibTextFocus("LibTextFocus - Non Title", false)
+            LibText("LibText")
+            LibTextBadge(imageId = R.drawable.ic_notifications, titleString = "Lib Text Badge", textString = "Dummy Badge String")
+            LibClickableText(textVal = "Lib Clickable Text", true) {}
+            LibTextField("Lib Text Field", leadingIconId = R.drawable.ic_phone)
+            LibTextFieldOutlined("Lib Text Field Outlined", leadingIconId = R.mipmap.email)
+            LibTextFieldPassword("Lib Text Field Password")
+            LibButton("Dummy Button") {}
+            LibButtonBadge(imageId = R.drawable.ic_launcher_foreground, titleString = "Dummy Button", textString = "This is a dummy image button for the preview.") {}
+            LibDividerText(textString = "Or")
+            LibButtonFocus(buttonText = "Focus") {}
+            LibCheckbox("Lib Checkbox")
+        }
     }
-
-
 }

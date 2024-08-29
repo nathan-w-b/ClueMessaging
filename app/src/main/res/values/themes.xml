@@ -2,7 +2,7 @@
 <resources>
 
     <style name="Theme.ClueMessaging" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/purple_200</item>
+        <item name="android:statusBarColor">@color/moonlight</item>
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
 </resources>

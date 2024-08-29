@@ -20,6 +20,7 @@ import com.example.cluemessaging.ui.screens.WorkInProgressScreen
 import com.example.cluemessaging.ui.ClueMessagingRouter
 import com.example.cluemessaging.ui.ClueMessagingScreens
 import com.example.cluemessaging.ui.screens.*
+import com.example.cluemessaging.ui.theme.ClueMessagingTheme
 
 class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher =
@@ -38,7 +39,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MessagingApp(this)
+            ClueMessagingTheme() {
+                MessagingApp(this)
+            }
         }
     }
 
@@ -73,7 +76,7 @@ fun MessagingApp(context: Context){
                     ViewTermsScreen()
                 }
                 is ClueMessagingScreens.SignUpPhoneNumberScreen -> {
-                    WorkInProgressScreen(title = "Sign Up Phone Number")
+                    SignUpPhoneNumberScreen()
                 }
                 is ClueMessagingScreens.WorkInProgressScreen ->{
                     WorkInProgressScreen(title = "Work In Progress")

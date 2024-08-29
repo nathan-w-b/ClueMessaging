@@ -1,18 +1,19 @@
 package com.example.cluemessaging
 
+import android.Manifest.permission.READ_CONTACTS
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.cluemessaging.ui.screens.LoginScreen
 import com.example.cluemessaging.ui.screens.WorkInProgressScreen
@@ -21,25 +22,38 @@ import com.example.cluemessaging.ui.ClueMessagingScreens
 import com.example.cluemessaging.ui.screens.*
 
 class MainActivity : ComponentActivity() {
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                ClueMessagingRouter.navigateTo(ClueMessagingScreens.WorkInProgressScreen)
+            }
+            else{
+                ClueMessagingRouter.navigateTo(ClueMessagingScreens.WorkInProgressScreen)
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MessagingApp()
+            MessagingApp(this)
         }
     }
 
-    fun CheckPermission(permission: String, requestCode: Int) {
-        if(ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_DENIED){
-            ActivityCompat.requestPermissions(this, arrayOf(permission), requestCode)
-        } else {
-            Toast.makeText(this, "Permission already granted.", Toast.LENGTH_SHORT).show()
+    fun getPermissions() {
+        if (ContextCompat.checkSelfPermission(this, READ_CONTACTS)
+            != PackageManager.PERMISSION_GRANTED) {
+                // The registered ActivityResultCallback gets the result of this request.
+                requestPermissionLauncher.launch(
+                    READ_CONTACTS)
         }
     }
 }
 
 @Composable
-fun MessagingApp(){
+fun MessagingApp(context: Context){
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = colorResource(R.color.moonlight)
@@ -53,7 +67,7 @@ fun MessagingApp(){
                     TermsCheck()
                 }
                 is ClueMessagingScreens.AllowPermissionsScreen ->{
-                    AllowPermissionsScreen()
+                    AllowPermissionsScreen(context)
                 }
                 is ClueMessagingScreens.ViewTermsScreen -> {
                     ViewTermsScreen()

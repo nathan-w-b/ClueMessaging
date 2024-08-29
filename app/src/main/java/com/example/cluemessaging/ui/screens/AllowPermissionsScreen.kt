@@ -1,5 +1,6 @@
 package com.example.cluemessaging.ui.screens
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,7 +16,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.cluemessaging.MainActivity
 import com.example.cluemessaging.R
+import com.example.cluemessaging.ui.ClueMessagingRouter
+import com.example.cluemessaging.ui.ClueMessagingScreens
 import com.example.cluemessaging.ui.composable_lib.LibButton
 import com.example.cluemessaging.ui.composable_lib.LibClickableText
 import com.example.cluemessaging.ui.composable_lib.LibTextFocus
@@ -24,7 +28,7 @@ import com.example.cluemessaging.ui.composable_lib.LibText
 
 @Preview(showSystemUi = true)
 @Composable
-fun AllowPermissionsScreen() {
+fun AllowPermissionsScreen(context: Context? = null) {
     Surface(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp)
@@ -58,9 +62,13 @@ fun AllowPermissionsScreen() {
             Row(
                 modifier = Modifier.padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically) {
-               LibClickableText(textVal = "Not now") {}
+               LibClickableText(textVal = "Not now") {
+                   ClueMessagingRouter.navigateTo(ClueMessagingScreens.SignUpPhoneNumberScreen)
+               }
                Spacer(modifier = Modifier.weight(1f))
-               LibButton(textVal = "Next") {}
+               LibButton(textVal = "Next") {
+                   (context as MainActivity).getPermissions()
+               }
             }
         }
     }

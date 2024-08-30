@@ -18,8 +18,8 @@ import com.example.cluemessaging.ui.ClueMessagingRouter
 import com.example.cluemessaging.ui.ClueMessagingScreens
 import com.example.cluemessaging.ui.composable_lib.LibButton
 import com.example.cluemessaging.ui.composable_lib.LibClickableText
+import com.example.cluemessaging.ui.theme.ClueMessagingTheme
 
-@Preview(showSystemUi = true)
 @Composable
 fun TermsCheck(){
     Surface(
@@ -28,7 +28,7 @@ fun TermsCheck(){
             modifier = Modifier
                 .fillMaxSize()
                 .background(colorResource(R.color.moonlight))
-                .padding(32.dp),
+                .padding(40.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
@@ -36,20 +36,32 @@ fun TermsCheck(){
                 painter = painterResource(id = R.drawable.logo_namecentered),
                 contentDescription = "")
             LibTextFocus("Take privacy with you.\nBe yourself in every message.", false)
-            Spacer(modifier = Modifier.size(18.dp))
+            Spacer(modifier = Modifier.size(64.dp))
             LibClickableText("Terms & Privacy Policy", centered = true) {
                 ClueMessagingRouter.navigateTo(
                     ClueMessagingScreens.ViewTermsScreen
                 )
             }
-            Spacer(modifier = Modifier.size(18.dp))
-            LibButton("Continue") {
+            Spacer(modifier = Modifier.size(32.dp))
+            LibButton("Continue", true) {
                 ClueMessagingRouter.navigateTo(
                     ClueMessagingScreens.AllowPermissionsScreen)
             }
+            Spacer(modifier = Modifier.size(32.dp))
+            LibClickableText("Transfer or restore rccount", centered = true) {
+                ClueMessagingRouter.navigateTo(ClueMessagingScreens.WorkInProgressScreen)
+            }
         }
     }
-    SystemBackButtonHandler {
-        ClueMessagingRouter.navigateBack()
+//    SystemBackButtonHandler {
+//        ClueMessagingRouter.navigateBack()
+//    }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun TermsCheckPreview(){
+    ClueMessagingTheme() {
+        TermsCheck()
     }
 }

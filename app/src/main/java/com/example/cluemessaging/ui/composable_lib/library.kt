@@ -1,12 +1,12 @@
 package com.example.cluemessaging.ui.composable_lib
 
 import android.util.Log
-import android.widget.ImageButton
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,12 +14,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.ExposedDropdownMenuDefaults.TrailingIcon
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,17 +35,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -49,6 +58,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cluemessaging.R
@@ -89,6 +100,7 @@ fun LibTextFocus(textVal: String, title:Boolean = true, centered: Boolean = true
     )
     val textStyle = TextStyle(
         fontSize = 24.sp,
+        fontWeight = FontWeight.Medium,
         textAlign = textAlign
     )
     val style = if (title) titleStyle else textStyle
@@ -122,7 +134,11 @@ fun LibTextBadge(imageId: Int, titleString: String, textString: String){
 }
 
 @Composable
-fun LibTextField(labelValue: String, initValue: String = "", leadingIconId: Int? = null, onValueChangeFunction: ((String) -> Unit)? = null){
+fun LibTextField(labelValue: String,
+                 initValue: String = "",
+                 leadingIconId: Int? = null,
+                 keyboard: KeyboardType? = null,
+                 onValueChangeFunction: ((String) -> Unit)? = null){
     var leadingIconVal: @Composable (() -> Unit)? = null
     if (leadingIconId != null)
         leadingIconVal = {
@@ -131,6 +147,8 @@ fun LibTextField(labelValue: String, initValue: String = "", leadingIconId: Int?
                 painter = painterResource(id = leadingIconId),
                 contentDescription = "")
         }
+    val keyboardOptions: KeyboardOptions = if (keyboard != null) KeyboardOptions(
+        keyboardType = keyboard) else KeyboardOptions.Default
 
     TextField(
         modifier = Modifier
@@ -141,14 +159,18 @@ fun LibTextField(labelValue: String, initValue: String = "", leadingIconId: Int?
             unfocusedContainerColor = Color.Transparent),
         label = {Text(text = labelValue)},
         value = initValue,
-        keyboardOptions = KeyboardOptions.Default,
+
+        keyboardOptions = keyboardOptions,
         onValueChange = onValueChangeFunction?: {},
         leadingIcon = leadingIconVal
     )
 }
 
 @Composable
-fun LibTextFieldOutlined(labelValue: String, initValue: String = "", leadingIconId: Int? = null, onValueChangeFunction: ((String) -> Unit)? = null){
+fun LibTextFieldOutlined(labelValue: String,
+                         initValue: String = "",
+                         leadingIconId: Int? = null,
+                         onValueChangeFunction: ((String) -> Unit)? = null){
     var leadingIconVal: @Composable (() -> Unit)? = null
     if (leadingIconId != null)
         leadingIconVal = {
@@ -207,9 +229,70 @@ fun LibTextFieldPassword(labelValue: String = "Password", initValue: String = ""
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LibButton(textVal: String, onClickFunction: () -> Unit){
-    Button(onClick = onClickFunction) {
+fun LibComboField(optionsList: Array<String>, width: Dp = 0.dp, onValueChangeFunction: ((String) -> Unit)? = null) {
+    var selectedValue by remember { mutableStateOf(optionsList[0]) }
+    var isExpanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+//        modifier = Modifier.width(IntrinsicSize.Min),
+        expanded = isExpanded,
+        onExpandedChange = { isExpanded = !isExpanded }
+    ){
+        if (width == 0.dp) {
+            TextField(
+                modifier = Modifier
+                    .menuAnchor()
+                    .clip(RoundedCornerShape(4.dp)),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.LightGray,
+                    unfocusedContainerColor = Color.Transparent),
+                value = selectedValue,
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(isExpanded) }
+            )
+        }
+        else {
+            TextField(
+                modifier = Modifier
+                    .menuAnchor()
+                    .width(width)
+                    .clip(RoundedCornerShape(4.dp)),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.LightGray,
+                    unfocusedContainerColor = Color.Transparent),
+                value = selectedValue,
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(isExpanded) }
+            )
+        }
+        ExposedDropdownMenu(
+            expanded = isExpanded,
+            onDismissRequest = {isExpanded = false}) {
+            optionsList.forEachIndexed{ index, value ->
+                DropdownMenuItem(
+                    text = { Text(text = value) },
+                    onClick = {
+                        selectedValue = optionsList[index]
+                        isExpanded = false
+                        onValueChangeFunction?.invoke(selectedValue)
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun LibButton(textVal: String, fillWidth: Boolean = false, onClickFunction: () -> Unit){
+    Button(
+        modifier = if (fillWidth) Modifier.fillMaxWidth() else Modifier,
+        onClick = onClickFunction
+    ) {
         LibText(textVal, true)
     }
 }
@@ -354,6 +437,7 @@ fun LibPreview(){
             LibTextFieldOutlined("Lib Text Field Outlined", leadingIconId = R.mipmap.email)
             LibTextFieldPassword("Lib Text Field Password")
             LibButton("Dummy Button") {}
+            LibButton("Dummy Large Button", true) {}
             LibButtonBadge(imageId = R.drawable.ic_launcher_foreground, titleString = "Dummy Button", textString = "This is a dummy image button for the preview.") {}
             LibDividerText(textString = "Or")
             LibButtonFocus(buttonText = "Focus") {}

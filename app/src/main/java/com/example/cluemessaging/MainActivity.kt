@@ -81,6 +81,9 @@ fun MessagingApp(context: Context){
                 is ClueMessagingScreens.WorkInProgressScreen ->{
                     WorkInProgressScreen(title = "Work In Progress")
                 }
+                else -> {
+                    WorkInProgressScreen(title = "Work In Progress")
+                }
             }
         }
     }

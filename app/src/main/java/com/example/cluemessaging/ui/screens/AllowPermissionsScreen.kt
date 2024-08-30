@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,21 +25,21 @@ import com.example.cluemessaging.ui.composable_lib.LibClickableText
 import com.example.cluemessaging.ui.composable_lib.LibTextFocus
 import com.example.cluemessaging.ui.composable_lib.LibTextBadge
 import com.example.cluemessaging.ui.composable_lib.LibText
+import com.example.cluemessaging.ui.theme.ClueMessagingTheme
 
-@Preview(showSystemUi = true)
 @Composable
 fun AllowPermissionsScreen(context: Context? = null) {
     Surface(modifier = Modifier
         .fillMaxSize()
-        .padding(start = 16.dp, top = 72.dp, end = 16.dp, bottom = 48.dp)
-        .background(color = Color.Transparent)){
+        .padding(16.dp)
+    ){
         Column (
-//            modifier = Modifier.background(color = colorResource(R.color.moonlight))
         ) {
-            LibTextFocus("Allow Permissions", true)
+            Spacer(modifier = Modifier.height(36.dp))
+            LibTextFocus("Allow Permissions", false, centered = false)
             Spacer(modifier = Modifier.height(18.dp))
             LibText("To help you message people you know, " +
-                    "ClueMessaging will request these permissions.")
+                    "Clue will request these permissions.")
             Spacer(modifier = Modifier.height(24.dp))
             LibTextBadge(
                 R.drawable.ic_notifications,
@@ -61,15 +62,25 @@ fun AllowPermissionsScreen(context: Context? = null) {
             Row(
                 modifier = Modifier.padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically) {
-               LibClickableText(textVal = "Not now") {
+                LibClickableText(textVal = "Not now") {
                    ClueMessagingRouter.navigateTo(ClueMessagingScreens.SignUpPhoneNumberScreen)
-               }
-               Spacer(modifier = Modifier.weight(1f))
+                }
+                Spacer(modifier = Modifier.weight(1f))
                LibButton(textVal = "Next") {
-                   (context as MainActivity).getPermissions()
+                   if (context != null) (context as MainActivity).getPermissions()
+                   else ClueMessagingRouter.navigateTo(ClueMessagingScreens.WorkInProgressScreen)
                }
             }
+            Spacer(modifier = Modifier.height(48.dp))
         }
+    }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun AllowPermissionsScreenPreview() {
+    ClueMessagingTheme(){
+        AllowPermissionsScreen(null)
     }
 }
 

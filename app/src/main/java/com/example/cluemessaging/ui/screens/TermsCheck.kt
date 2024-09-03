@@ -46,7 +46,7 @@ fun TermsCheck(){
                     ClueMessagingScreens.AllowPermissionsScreen)
             }
             Spacer(modifier = Modifier.size(32.dp))
-            LibClickableText("Transfer or restore rccount", centered = true) {
+            LibClickableText("Transfer or restore account", centered = true) {
                 ClueMessagingRouter.navigateTo(ClueMessagingScreens.WorkInProgressScreen)
             }
         }

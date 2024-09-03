@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,12 +49,15 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
@@ -67,7 +73,12 @@ fun LibSurface(content: @Composable () -> Unit){
     Surface(modifier = Modifier
         .fillMaxSize()
         .background(color = MaterialTheme.colorScheme.background)
-        .padding(start = 16.dp, top = 72.dp, end = 16.dp, bottom = 48.dp),
+        .imePadding()
+        .safeContentPadding()
+//        .padding(start = 16.dp, top = 72.dp, end = 16.dp, bottom = 48.dp)
+        .padding(start = 16.dp, top = 48.dp, end = 16.dp, bottom = 16.dp)
+        ,
+
         color = Color.Transparent
     ){
         content()
@@ -154,7 +165,6 @@ fun LibTextField(labelValue: String,
                 contentDescription = "")
         }
 
-    // NOTE - affect any changes here to LibDropdown's TextField as well
     TextField(
         modifier = Modifier
 //            .fillMaxWidth()
@@ -230,9 +240,37 @@ fun LibTextFieldPassword(labelValue: String = "Password", initValue: String = ""
     )
 }
 
+@Composable
+fun LibTextFieldPhoneNumber(onValueChangeFunction: ((String) -> Unit)? = null) {
+    var phoneNumber by rememberSaveable { mutableStateOf("") }
+    val numericRegex = Regex("[^0-9]")
+    TextField(
+        value = phoneNumber,
+        onValueChange = {
+            // Remove non-numeric characters.
+            val stripped = numericRegex.replace(it, "")
+            phoneNumber = if (stripped.length >= 10) {
+                stripped.substring(0..9)
+            } else {
+                stripped
+            }
+            onValueChangeFunction?.invoke(phoneNumber)
+        },
+        label = { Text("Enter Phone Number") },
+        visualTransformation = NanpVisualTransformation(),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        modifier = Modifier
+//            .fillMaxWidth()
+            .clip(RoundedCornerShape(4.dp)),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            unfocusedContainerColor = Color.Transparent),
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LibDropdown(optionValues: Array<String>, width: Dp? = null, onSelectionFunction: (String) -> Unit) {
+fun LibTextDropdown(optionValues: Array<String>, width: Dp? = null, onSelectionFunction: (String) -> Unit) {
     var isExpanded by remember {
         mutableStateOf(false)
     }
@@ -426,5 +464,48 @@ fun LibPreview(){
             LibButtonFocus(buttonText = "Focus") {}
             LibCheckbox("Lib Checkbox")
         }
+    }
+}
+
+
+class NanpVisualTransformation() : VisualTransformation {
+
+    override fun filter(text: AnnotatedString): TransformedText {
+        val trimmed = if (text.text.length >= 10) text.text.substring(0..9) else text.text
+
+        var out = if (trimmed.isNotEmpty()) "(" else ""
+
+        for (i in trimmed.indices) {
+            if (i == 3) out += ") "
+            if (i == 6) out += "-"
+            out += trimmed[i]
+        }
+        return TransformedText(AnnotatedString(out), phoneNumberOffsetTranslator)
+    }
+
+    private val phoneNumberOffsetTranslator = object : OffsetMapping {
+
+        override fun originalToTransformed(offset: Int): Int =
+            when (offset) {
+                0  -> offset
+                // Add 1 for opening parenthesis.
+                in 1..3 -> offset + 1
+                // Add 3 for both parentheses and a space.
+                in 4..6 -> offset + 3
+                // Add 4 for both parentheses, space, and hyphen.
+                else -> offset + 4
+            }
+
+        override fun transformedToOriginal(offset: Int): Int =
+            when (offset) {
+                0 -> offset
+                // Subtract 1 for opening parenthesis.
+                in 1..5 -> offset - 1
+                // Subtract 3 for both parentheses and a space.
+                in 6..10 -> offset - 3
+                // Subtract 4 for both parentheses, space, and hyphen.
+                else -> offset - 4
+            }
+
     }
 }

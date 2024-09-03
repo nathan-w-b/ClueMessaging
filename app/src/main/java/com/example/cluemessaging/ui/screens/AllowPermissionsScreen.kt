@@ -29,7 +29,6 @@ fun AllowPermissionsScreen(context: Context? = null) {
     LibSurface() {
         Column (
         ) {
-            Spacer(modifier = Modifier.height(36.dp))
             LibTextFocus("Allow Permissions", false, centered = false)
             Spacer(modifier = Modifier.height(18.dp))
             LibText("To help you message people you know, " +
@@ -65,7 +64,6 @@ fun AllowPermissionsScreen(context: Context? = null) {
                    else ClueMessagingRouter.navigateTo(ClueMessagingScreens.WorkInProgressScreen)
                }
             }
-            Spacer(modifier = Modifier.height(48.dp))
         }
     }
 }

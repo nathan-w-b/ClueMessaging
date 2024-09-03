@@ -140,8 +140,9 @@ fun LibTextBadge(imageId: Int, titleString: String, textString: String){
             painter = painterResource(imageId),
             contentDescription = titleString,
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground))
+        Spacer(modifier = Modifier.width(6.dp))
         Column (
-            modifier = Modifier.padding(6.dp)
+//            modifier = Modifier.padding(6.dp)
         ) {
             LibText(textVal = titleString)
             Spacer(modifier = Modifier.height(2.dp))
@@ -153,6 +154,7 @@ fun LibTextBadge(imageId: Int, titleString: String, textString: String){
 @Composable
 fun LibTextField(labelValue: String,
                  initValue: String = "",
+                 fillWidth: Boolean = false,
                  leadingIconId: Int? = null,
                  keyboardType: KeyboardType? = null,
                  onValueChangeFunction: ((String) -> Unit)? = null){
@@ -166,9 +168,12 @@ fun LibTextField(labelValue: String,
         }
 
     TextField(
-        modifier = Modifier
-//            .fillMaxWidth()
-            .clip(RoundedCornerShape(4.dp)),
+        modifier =
+            if (fillWidth) Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(4.dp))
+            else Modifier
+                .clip(RoundedCornerShape(4.dp)),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
             unfocusedContainerColor = Color.Transparent),
@@ -336,7 +341,10 @@ fun LibButtonBadge(imageId: Int, titleString: String,
         colors = ButtonDefaults.buttonColors(Color.Transparent, MaterialTheme.colorScheme.onBackground),
         border = BorderStroke(0.dp, Color.Transparent),
         onClick = onClickFunction) {
-        Row( modifier = Modifier.fillMaxWidth()) {
+        Row( modifier = Modifier
+            .fillMaxWidth()
+//            .padding(6.dp)
+        ) {
             Image(
                 modifier = Modifier
                     .size(40.dp),
@@ -344,8 +352,12 @@ fun LibButtonBadge(imageId: Int, titleString: String,
                 contentDescription = titleString,
                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground)
                 )
-            Column () {
+            Spacer(modifier = Modifier.width(6.dp))
+            Column (
+//                modifier = Modifier.padding(6.dp)
+            ) {
                 LibText(textVal = titleString)
+                Spacer(modifier = Modifier.height(2.dp))
                 LibTextDescription(textVal = textString)
             }
         }

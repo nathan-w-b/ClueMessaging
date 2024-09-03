@@ -23,7 +23,6 @@ import com.example.cluemessaging.ui.composable_lib.LibTextBadge
 import com.example.cluemessaging.ui.composable_lib.LibText
 import com.example.cluemessaging.ui.theme.ClueMessagingTheme
 
-@Preview(showSystemUi = true)
 @Composable
 fun AllowPermissionsScreen(context: Context? = null) {
     LibSurface() {

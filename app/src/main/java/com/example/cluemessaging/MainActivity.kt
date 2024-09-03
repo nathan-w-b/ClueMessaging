@@ -78,8 +78,11 @@ fun MessagingApp(context: Context){
                 is ClueMessagingScreens.SignUpPhoneNumberScreen -> {
                     SignUpPhoneNumberScreen()
                 }
-                is ClueMessagingScreens.WorkInProgressScreen ->{
+                is ClueMessagingScreens.WorkInProgressScreen -> {
                     WorkInProgressScreen(title = "Work In Progress")
+                }
+                is ClueMessagingScreens.SetupProfileScreen -> {
+                    SetupProfileScreen()
                 }
                 else -> {
                     WorkInProgressScreen(title = "Work In Progress")

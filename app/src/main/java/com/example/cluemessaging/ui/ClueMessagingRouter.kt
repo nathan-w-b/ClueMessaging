@@ -1,6 +1,5 @@
 package com.example.cluemessaging.ui
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 
@@ -11,6 +10,7 @@ sealed class ClueMessagingScreens (){
     data object SignUpPhoneNumberScreen : ClueMessagingScreens()
     data object ViewTermsScreen: ClueMessagingScreens()
     data object WorkInProgressScreen: ClueMessagingScreens()
+    data object SetupProfileScreen: ClueMessagingScreens()
 }
 
 object ClueMessagingRouter {

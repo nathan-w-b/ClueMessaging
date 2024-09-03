@@ -10,6 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.cluemessaging.ui.ClueMessagingRouter
+import com.example.cluemessaging.ui.ClueMessagingScreens
 import com.example.cluemessaging.ui.composable_lib.LibButton
 import com.example.cluemessaging.ui.composable_lib.LibTextDropdown
 import com.example.cluemessaging.ui.composable_lib.LibSurface
@@ -43,7 +45,9 @@ fun SignUpPhoneNumberScreen(){
                 Spacer(modifier = Modifier.weight(.6f))
                 Row() {
                     Spacer(modifier = Modifier.weight(1f))
-                    LibButton("Continue") {}
+                    LibButton("Continue") {
+                        ClueMessagingRouter.navigateTo(ClueMessagingScreens.SetupProfileScreen)
+                    }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
             }

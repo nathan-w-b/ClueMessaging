@@ -1,6 +1,5 @@
 package com.example.cluemessaging.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -13,25 +12,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primaryContainer = Color.Gray,
-    background = Color.Black,
-    surface = Color.Black,
-    primary = Color.Gray,
-    secondary = Color.LightGray,
-    tertiary = Color.LightGray,
-    onPrimary = Color.Black
+    background = darkBackground,
+    onBackground = darkOnBackground,
+    surface = darkSurface,
+    onSurface = darkOnSurface,
+    primary = darkPrimary,
+    onPrimary = darkOnPrimary,
+    primaryContainer = darkPrimaryContainer,
+    onPrimaryContainer = darkOnPrimaryContainer,
+    onSecondary = Color.White,
+    onTertiary = Color.White
 )
 
 private val LightColorScheme = lightColorScheme(
     background = Moonlight,
-    surface = Moonlight,
-    primary = MoonlightComplementary,
-    inversePrimary = MoonlightComplementaryLight,
-    secondary = MoonlightTertiary,
     onBackground = Color.Black,
+    surface = Moonlight,
     onSurface = Color.Black,
+    primary = lightPrimary,
     onPrimary = Color.Black,
-    onSecondary = Color.Black,
+    primaryContainer = MoonlightContainer,
+    onPrimaryContainer = Color.Black,
+    tertiary = lightTertiary
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),

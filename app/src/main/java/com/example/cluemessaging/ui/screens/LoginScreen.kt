@@ -18,12 +18,13 @@ import com.example.cluemessaging.R
 import com.example.cluemessaging.ui.ClueMessagingRouter
 import com.example.cluemessaging.ui.ClueMessagingScreens
 import com.example.cluemessaging.ui.composable_lib.LibButton
+import com.example.cluemessaging.ui.composable_lib.LibSurface
 import com.example.cluemessaging.ui.composable_lib.LibText
 import com.example.cluemessaging.ui.composable_lib.LibTextFieldOutlined
 import com.example.cluemessaging.ui.composable_lib.LibTextFieldPassword
 import com.example.cluemessaging.ui.composable_lib.LibTextFocus
+import com.example.cluemessaging.ui.theme.ClueMessagingTheme
 
-@Preview(showSystemUi = true)
 @Composable
 fun LoginScreen(){
     var email by remember {
@@ -33,33 +34,43 @@ fun LoginScreen(){
         mutableStateOf("")
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        LibText("Welcome", false)
-        Spacer(modifier = Modifier.height(12.dp))
-        LibTextFocus(textVal = "Please Login", true)
-        Spacer(modifier = Modifier.height(36.dp))
-        LibTextFieldOutlined(
-            labelValue = "Email Address",
-            initValue = email,
-            leadingIconId = R.mipmap.email
-        ) {
-            email = it
+    LibSurface() {
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            LibText("Welcome", false)
+            Spacer(modifier = Modifier.height(12.dp))
+            LibTextFocus(textVal = "Please Login", true)
+            Spacer(modifier = Modifier.height(36.dp))
+            LibTextFieldOutlined(
+                labelValue = "Email Address",
+                initValue = email,
+                leadingIconId = R.mipmap.email
+            ) {
+                email = it
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            LibTextFieldPassword(
+                initValue = password
+            ) {
+                password = it
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            LibButton(textVal = "Login") {
+                Log.i("Button", "Email: $email Password: $password")
+                ClueMessagingRouter.navigateTo(ClueMessagingScreens.TermsOpeningScreen)
+            }
         }
-        Spacer(modifier = Modifier.height(12.dp))
-        LibTextFieldPassword(
-            initValue = password
-        ) {
-            password = it
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        LibButton(textVal = "Login") {
-            Log.i("Button", "Email: $email Password: $password")
-            ClueMessagingRouter.navigateTo(ClueMessagingScreens.TermsOpeningScreen)
-        }
+    }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun LoginScreenPreview(){
+    ClueMessagingTheme {
+        LoginScreen()
     }
 }

@@ -1,7 +1,6 @@
 package com.example.cluemessaging.ui.composable_lib
 
 import android.util.Log
-import android.widget.ImageButton
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -9,35 +8,43 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -49,24 +56,32 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cluemessaging.R
 import com.example.cluemessaging.ui.theme.ClueMessagingTheme
 
 @Composable
+fun LibSurface(content: @Composable () -> Unit){
+    Surface(modifier = Modifier
+        .fillMaxSize()
+        .background(color = MaterialTheme.colorScheme.background)
+        .padding(start = 16.dp, top = 72.dp, end = 16.dp, bottom = 48.dp),
+        color = Color.Transparent
+    ){
+        content()
+    }
+}
+
+@Composable
 fun LibText(textVal: String, centered: Boolean = false, textColor: Color? = null) {
     val textAlignment = if (centered) TextAlign.Center else TextAlign.Start
-    if (textColor == null)
-        Text(
-            text = textVal,
-    //        modifier = Modifier.fillMaxWidth(),
-            textAlign = textAlignment)
-    else
-        Text(
-            text = textVal,
-            textAlign = textAlignment,
-            color = textColor)
+    Text(
+        text = textVal,
+//        modifier = Modifier.fillMaxWidth(),
+        textAlign = textAlignment,
+        color = textColor ?: MaterialTheme.colorScheme.onBackground)
 }
 
 @Composable
@@ -76,7 +91,8 @@ fun LibTextDescription(textVal: String, centered: Boolean = false) {
         text = textVal,
         modifier = Modifier.fillMaxWidth(),
         fontWeight = FontWeight.Light,
-        textAlign = textAlignment)
+        textAlign = textAlignment,
+        color = MaterialTheme.colorScheme.onBackground)
 }
 
 @Composable
@@ -96,7 +112,8 @@ fun LibTextFocus(textVal: String, title:Boolean = true, centered: Boolean = true
     Text(
         text = textVal,
         modifier = Modifier.fillMaxWidth(),
-        style = style
+        style = style,
+        color = MaterialTheme.colorScheme.onBackground
     )
 }
 
@@ -110,7 +127,8 @@ fun LibTextBadge(imageId: Int, titleString: String, textString: String){
                 .size(44.dp)
                 .padding(6.dp),
             painter = painterResource(imageId),
-            contentDescription = titleString)
+            contentDescription = titleString,
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground))
         Column (
             modifier = Modifier.padding(6.dp)
         ) {
@@ -122,7 +140,11 @@ fun LibTextBadge(imageId: Int, titleString: String, textString: String){
 }
 
 @Composable
-fun LibTextField(labelValue: String, initValue: String = "", leadingIconId: Int? = null, onValueChangeFunction: ((String) -> Unit)? = null){
+fun LibTextField(labelValue: String,
+                 initValue: String = "",
+                 leadingIconId: Int? = null,
+                 keyboardType: KeyboardType? = null,
+                 onValueChangeFunction: ((String) -> Unit)? = null){
     var leadingIconVal: @Composable (() -> Unit)? = null
     if (leadingIconId != null)
         leadingIconVal = {
@@ -132,16 +154,17 @@ fun LibTextField(labelValue: String, initValue: String = "", leadingIconId: Int?
                 contentDescription = "")
         }
 
+    // NOTE - affect any changes here to LibDropdown's TextField as well
     TextField(
         modifier = Modifier
 //            .fillMaxWidth()
             .clip(RoundedCornerShape(4.dp)),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.LightGray,
+            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
             unfocusedContainerColor = Color.Transparent),
         label = {Text(text = labelValue)},
         value = initValue,
-        keyboardOptions = KeyboardOptions.Default,
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType?:KeyboardType.Text),
         onValueChange = onValueChangeFunction?: {},
         leadingIcon = leadingIconVal
     )
@@ -207,10 +230,51 @@ fun LibTextFieldPassword(labelValue: String = "Password", initValue: String = ""
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LibDropdown(optionValues: Array<String>, width: Dp? = null, onSelectionFunction: (String) -> Unit) {
+    var isExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    var selectedOption by remember {
+        mutableStateOf(optionValues[0])
+    }
+
+    ExposedDropdownMenuBox(expanded = isExpanded, onExpandedChange = {isExpanded = !isExpanded}) {
+        TextField(
+            modifier = Modifier
+                .menuAnchor()
+                .width(width?: 200.dp),
+            value = selectedOption,
+            onValueChange = {},
+            readOnly = true,
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+            },
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                unfocusedContainerColor = Color.Transparent),
+        )
+        ExposedDropdownMenu(expanded = isExpanded, onDismissRequest = { isExpanded = false }){
+            optionValues.forEachIndexed{ index, option ->
+            DropdownMenuItem(
+                text = { Text(text = option) },
+                onClick = {
+                    selectedOption = optionValues[index]
+                    isExpanded = false
+                    onSelectionFunction.invoke(selectedOption)
+                },
+                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+            )}
+        }
+    }
+}
+
 @Composable
 fun LibButton(textVal: String, onClickFunction: () -> Unit){
     Button(onClick = onClickFunction) {
-        LibText(textVal, true)
+        LibText(textVal, true, textColor = MaterialTheme.colorScheme.onPrimary)
     }
 }
 
@@ -236,9 +300,12 @@ fun LibButtonBadge(imageId: Int, titleString: String,
         onClick = onClickFunction) {
         Row( modifier = Modifier.fillMaxWidth()) {
             Image(
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier
+                    .size(40.dp),
                 painter = painterResource(imageId),
-                contentDescription = titleString)
+                contentDescription = titleString,
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground)
+                )
             Column () {
                 LibText(textVal = titleString)
                 LibTextDescription(textVal = textString)
@@ -259,7 +326,7 @@ fun LibButtonFocus(buttonText: String, onClickFunction: () -> Unit) {
                 brush = Brush.horizontalGradient(
                     listOf(
                         MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.inversePrimary
+                        MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 ),
                 shape = RoundedCornerShape(12.dp)
@@ -281,7 +348,7 @@ fun LibClickableText(textVal: String, centered: Boolean = false, onClickFunction
 
     val annotatedString = buildAnnotatedString {
         //append("Firstly, ")
-        withStyle(style = SpanStyle(color = Color.Blue)){
+        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.tertiary)){
             pushStringAnnotation(tag = textVal, annotation = textVal)
             append(textVal)
         }
@@ -307,16 +374,16 @@ fun LibDividerText(textString: String){
         HorizontalDivider(modifier = Modifier
             .fillMaxWidth()
             .weight(1f),
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.onBackground,
             thickness = 1.dp)
 
-        Text(text = textString, fontSize = 16.sp, color = Color.DarkGray,
+        Text(text = textString, fontSize = 16.sp, color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(8.dp))
 
         HorizontalDivider(modifier = Modifier
             .fillMaxWidth()
             .weight(1f),
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.onBackground,
             thickness = 1.dp)
     }
 }

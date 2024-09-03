@@ -21,6 +21,7 @@ import com.example.cluemessaging.ui.composable_lib.LibSurface
 import com.example.cluemessaging.ui.composable_lib.LibTextFocus
 import com.example.cluemessaging.ui.composable_lib.LibTextBadge
 import com.example.cluemessaging.ui.composable_lib.LibText
+import com.example.cluemessaging.ui.theme.ClueMessagingTheme
 
 @Preview(showSystemUi = true)
 @Composable
@@ -28,10 +29,11 @@ fun AllowPermissionsScreen(context: Context? = null) {
     LibSurface() {
         Column (
         ) {
-            LibTextFocus("Allow Permissions", true)
+            Spacer(modifier = Modifier.height(36.dp))
+            LibTextFocus("Allow Permissions", false, centered = false)
             Spacer(modifier = Modifier.height(18.dp))
             LibText("To help you message people you know, " +
-                    "ClueMessaging will request these permissions.")
+                    "Clue will request these permissions.")
             Spacer(modifier = Modifier.height(24.dp))
             LibTextBadge(
                 R.drawable.ic_notifications,
@@ -54,15 +56,25 @@ fun AllowPermissionsScreen(context: Context? = null) {
             Row(
                 modifier = Modifier.padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically) {
-               LibClickableText(textVal = "Not now") {
+                LibClickableText(textVal = "Not now") {
                    ClueMessagingRouter.navigateTo(ClueMessagingScreens.SignUpPhoneNumberScreen)
-               }
-               Spacer(modifier = Modifier.weight(1f))
+                }
+                Spacer(modifier = Modifier.weight(1f))
                LibButton(textVal = "Next") {
-                   (context as MainActivity).getPermissions()
+                   if (context != null) (context as MainActivity).getPermissions()
+                   else ClueMessagingRouter.navigateTo(ClueMessagingScreens.WorkInProgressScreen)
                }
             }
+            Spacer(modifier = Modifier.height(48.dp))
         }
+    }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun AllowPermissionsScreenPreview() {
+    ClueMessagingTheme(){
+        AllowPermissionsScreen(null)
     }
 }
 

@@ -16,7 +16,9 @@ import com.example.cluemessaging.ui.ClueMessagingScreens
 import com.example.cluemessaging.ui.composable_lib.LibButton
 import com.example.cluemessaging.ui.composable_lib.LibClickableText
 import com.example.cluemessaging.ui.composable_lib.LibSurface
+import com.example.cluemessaging.ui.theme.ClueMessagingTheme
 
+@Preview(showSystemUi = true)
 @Composable
 fun TermsCheck(){
     LibSurface() {
@@ -32,16 +34,20 @@ fun TermsCheck(){
                 painter = painterResource(id = R.drawable.logo_namecentered),
                 contentDescription = "")
             LibTextFocus("Take privacy with you.\nBe yourself in every message.", false)
-            Spacer(modifier = Modifier.size(18.dp))
+            Spacer(modifier = Modifier.size(64.dp))
             LibClickableText("Terms & Privacy Policy", centered = true) {
                 ClueMessagingRouter.navigateTo(
                     ClueMessagingScreens.ViewTermsScreen
                 )
             }
-            Spacer(modifier = Modifier.size(18.dp))
+            Spacer(modifier = Modifier.size(32.dp))
             LibButton("Continue") {
                 ClueMessagingRouter.navigateTo(
                     ClueMessagingScreens.AllowPermissionsScreen)
+            }
+            Spacer(modifier = Modifier.size(32.dp))
+            LibClickableText("Transfer or restore rccount", centered = true) {
+                ClueMessagingRouter.navigateTo(ClueMessagingScreens.WorkInProgressScreen)
             }
         }
     }
@@ -53,5 +59,7 @@ fun TermsCheck(){
 @Preview(showSystemUi = true)
 @Composable
 fun TermsCheckPreview() {
-    TermsCheck()
+    ClueMessagingTheme() {
+        TermsCheck()
+    }
 }

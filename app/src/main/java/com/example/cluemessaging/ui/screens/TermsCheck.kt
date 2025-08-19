@@ -18,7 +18,6 @@ import com.example.cluemessaging.ui.composable_lib.LibClickableText
 import com.example.cluemessaging.ui.composable_lib.LibSurface
 import com.example.cluemessaging.ui.theme.ClueMessagingTheme
 
-@Preview(showSystemUi = true)
 @Composable
 fun TermsCheck(){
     LibSurface() {
@@ -41,7 +40,7 @@ fun TermsCheck(){
                 )
             }
             Spacer(modifier = Modifier.size(32.dp))
-            LibButton("Continue") {
+            LibButton("Continue", fillWidth = true) {
                 ClueMessagingRouter.navigateTo(
                     ClueMessagingScreens.AllowPermissionsScreen)
             }
@@ -51,9 +50,9 @@ fun TermsCheck(){
             }
         }
     }
-    SystemBackButtonHandler {
-        ClueMessagingRouter.navigateBack()
-    }
+//    SystemBackButtonHandler {
+//        ClueMessagingRouter.navigateBack()
+//    }
 }
 
 @Preview(showSystemUi = true)

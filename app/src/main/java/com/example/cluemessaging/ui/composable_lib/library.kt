@@ -315,9 +315,18 @@ fun LibTextDropdown(optionValues: Array<String>, width: Dp? = null, onSelectionF
 }
 
 @Composable
-fun LibButton(textVal: String, onClickFunction: () -> Unit){
-    Button(onClick = onClickFunction) {
-        LibText(textVal, true, textColor = MaterialTheme.colorScheme.onPrimary)
+fun LibButton(textVal: String, fillWidth: Boolean = false, onClickFunction: () -> Unit){
+    if (fillWidth){
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onClickFunction) {
+            LibText(textVal, true, textColor = MaterialTheme.colorScheme.onPrimary)
+        }
+    }
+    else {
+        Button(onClick = onClickFunction) {
+            LibText(textVal, true, textColor = MaterialTheme.colorScheme.onPrimary)
+        }
     }
 }
 

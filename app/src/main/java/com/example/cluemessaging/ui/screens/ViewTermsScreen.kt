@@ -9,12 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cluemessaging.R
 import com.example.cluemessaging.SystemBackButtonHandler
 import com.example.cluemessaging.ui.ClueMessagingRouter
 import com.example.cluemessaging.ui.composable_lib.LibText
 import com.example.cluemessaging.ui.composable_lib.LibTextFocus
+import com.example.cluemessaging.ui.theme.ClueMessagingTheme
 
 @Composable
 fun ViewTermsScreen(){
@@ -35,7 +37,15 @@ fun ViewTermsScreen(){
         }
     }
 
-    SystemBackButtonHandler {
-        ClueMessagingRouter.navigateBack()
+//    SystemBackButtonHandler {
+//        ClueMessagingRouter.navigateBack()
+//    }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun ViewTermsScreenPreview() {
+    ClueMessagingTheme {
+        ViewTermsScreen()
     }
 }
